@@ -1,53 +1,71 @@
-#include <stdio.h>
-#include <winsock2.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<errno.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<string.h>
  
-#pragma comment(lib, "ws2_32.lib") 
+#define MYPORT 8887
  
-int main(int argc, char* argv[])
+ 
+#define ERR_EXIT(m) \
+    do { \
+    perror(m); \
+    exit(EXIT_FAILURE); \
+    } while (0)
+ 
+void echo_ser(int sock)
 {
-    WSADATA wsaData;
-    WORD sockVersion = MAKEWORD(2,2);
-    if(WSAStartup(sockVersion, &wsaData) != 0)
-    {
-        return 0;
-    }
- 
-    SOCKET serSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); 
-    if(serSocket == INVALID_SOCKET)
-    {
-        printf("socket error !");
-        return 0;
-    }
- 
-    sockaddr_in serAddr;
-    serAddr.sin_family = AF_INET;
-    serAddr.sin_port = htons(8888);
-    serAddr.sin_addr.S_un.S_addr = INADDR_ANY;
-    if(bind(serSocket, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
-    {
-        printf("bind error !");
-        closesocket(serSocket);
-        return 0;
-    }
+    char recvbuf[1024] = {0};
+    struct sockaddr_in peeraddr;
+    socklen_t peerlen;
+    int n;
     
-    sockaddr_in remoteAddr;
-    int nAddrLen = sizeof(remoteAddr); 
-    while (true)
+    while (1)
     {
-        char recvData[255];  
-        int ret = recvfrom(serSocket, recvData, 255, 0, (sockaddr *)&remoteAddr, &nAddrLen);
-        if (ret > 0)
+        
+        peerlen = sizeof(peeraddr);
+        memset(recvbuf, 0, sizeof(recvbuf));
+        n = recvfrom(sock, recvbuf, sizeof(recvbuf), 0,
+                     (struct sockaddr *)&peeraddr, &peerlen);
+        if (n <= 0)
         {
-            recvData[ret] = 0x00;
-            printf("接受到一个连接：%s \r\n", inet_ntoa(remoteAddr.sin_addr));
-            printf(recvData);            
+            
+            if (errno == EINTR)
+                continue;
+            
+            ERR_EXIT("recvfrom error");
         }
- 
-        char * sendData = "一个来自服务端的UDP数据包\n";
-        sendto(serSocket, sendData, strlen(sendData), 0, (sockaddr *)&remoteAddr, nAddrLen);    
- 
+        else if(n > 0)
+        {
+            printf("接收到的数据：%s\n",recvbuf);
+            sendto(sock, recvbuf, n, 0,
+                   (struct sockaddr *)&peeraddr, peerlen);
+            printf("回送的数据：%s\n",recvbuf);
+        }
     }
-    closesocket(serSocket); 
-    WSACleanup();
+    close(sock);
+}
+ 
+int main(void)
+{
+    int sock;
+    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+        ERR_EXIT("socket error");
+    
+    struct sockaddr_in servaddr;
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    
+    printf("监听%d端口\n",MYPORT);
+    if (bind(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+        ERR_EXIT("bind error");
+    
+    echo_ser(sock);
+    
     return 0;
 }
