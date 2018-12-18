@@ -1,36 +1,65 @@
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <winsock2.h>
+#include <errno.h>
+#include <string.h>
  
-#pragma comment(lib, "ws2_32.lib") 
+#define MYPORT 8887
+char* SERVERIP = "127.0.0.1";
  
-int main(int argc, char* argv[])
+#define ERR_EXIT(m) \
+    do \
+{ \
+    perror(m); \
+    exit(EXIT_FAILURE); \
+    } while(0)
+ 
+void echo_cli(int sock)
 {
-    WORD socketVersion = MAKEWORD(2,2);
-    WSADATA wsaData; 
-    if(WSAStartup(socketVersion, &wsaData) != 0)
-    {
-        return 0;
-    }
-    SOCKET sclient = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    struct sockaddr_in servaddr;
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+    servaddr.sin_addr.s_addr = inet_addr(SERVERIP);
     
-    sockaddr_in sin;
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(8888);
-    sin.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
-    int len = sizeof(sin);
-    
-    char * sendData = "来自客户端的数据包.\n";
-    sendto(sclient, sendData, strlen(sendData), 0, (sockaddr *)&sin, len);
- 
-    char recvData[255];     
-    int ret = recvfrom(sclient, recvData, 255, 0, (sockaddr *)&sin, &len);
-    if(ret > 0)
+    int ret;
+    char sendbuf[1024] = {0};
+    char recvbuf[1024] = {0};
+    while (fgets(sendbuf, sizeof(sendbuf), stdin) != NULL)
     {
-        recvData[ret] = 0x00;
-        printf(recvData);
+        
+        printf("向服务器发送：%s\n",sendbuf);
+        sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
+        
+        ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
+        if (ret == -1)
+        {
+            if (errno == EINTR)
+                continue;
+            ERR_EXIT("recvfrom");
+        }
+        printf("从服务器接收：%s\n",recvbuf);
+        
+        memset(sendbuf, 0, sizeof(sendbuf));
+        memset(recvbuf, 0, sizeof(recvbuf));
     }
+    
+    close(sock);
+    
+    
+}
  
-    closesocket(sclient);
-    WSACleanup();
+int main(void)
+{
+    int sock;
+    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+        ERR_EXIT("socket");
+    
+    echo_cli(sock);
+    
     return 0;
 }
