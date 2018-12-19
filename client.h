@@ -29,12 +29,8 @@ void echo_cli(int sock)
         
     ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
     printf("从服务器接收：%s\n",recvbuf);
-        
-    memset(sendbuf, 0, sizeof(sendbuf));
-    memset(recvbuf, 0, sizeof(recvbuf));
     
     close(sock);
-    
     
 }
  
