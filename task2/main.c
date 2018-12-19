@@ -160,8 +160,8 @@ int StartReplyHi(int argc, char *argv[])
 	else if (pid == 0)
 	{
 		/*	 child process 	*/
-		printf("Reply hi UDP Service Started!\n");
 		Replyhi();
+		printf("Reply hi UDP Service Started!\n");
 	}
 	else
 	{
