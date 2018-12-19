@@ -122,25 +122,28 @@ int Quit(int argc, char *argv[])
     /* add XXX clean ops */
 }
 
-#include"syswrapper.h"
-#define MAX_CONNECT_QUEUE   1024
-int Replyhi()
+int Reply()
 {
-	char szBuf[MAX_BUF_LEN] = "\0";
-	char szReplyMsg[MAX_BUF_LEN] = "hi\0";
-	InitializeService();
-	while (1)
-	{
-		ServiceStart();
-		RecvMsg(szBuf);
-		SendMsg(szReplyMsg);
-		ServiceStop();
-	}
-	ShutdownService();
-	return 0;
+    int sock;
+    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+        ERR_EXIT("socket error");
+    
+    struct sockaddr_in servaddr;
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    
+    printf("监听%d端口\n",MYPORT);
+    if (bind(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+        ERR_EXIT("bind error");
+    
+    echo_ser(sock);
+    
+    return 0;
 }
 
-int StartReplyhi(int argc, char *argv[])
+int StartReply(int argc, char *argv[])
 {
 	int pid;
 	/* fork another process */
@@ -154,25 +157,25 @@ int StartReplyhi(int argc, char *argv[])
 	else if (pid == 0)
 	{
 		/*	 child process 	*/
-		Replyhi();
-		printf("Reply hi TCP Service Started!\n");
+		Reply();
+		printf("Reply hi UDP Service Started!\n");
 	}
 	else
 	{
 		/* 	parent process	 */
-		printf("Please input hello...\n");
+		printf("Please input some words...\n");
 	}
 }
 
 int Hello(int argc, char *argv[])
 {
-	char szBuf[MAX_BUF_LEN] = "\0";
-	char szMsg[MAX_BUF_LEN] = "hello\0";
-	OpenRemoteService();
-	SendMsg(szMsg);
-	RecvMsg(szBuf);
-	CloseRemoteService();
-	return 0;
+    int sock;
+    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+        ERR_EXIT("socket");
+    
+    echo_cli(sock);
+    
+    return 0;
 }
 
 #include <sys/ioctl.h>
@@ -278,7 +281,7 @@ int main()
     SetPrompt("MenuOS>>");
     MenuConfig("version","MenuOS V1.0(Based on Linux 3.18.6)",NULL);
     MenuConfig("quit","Quit from MenuOS",Quit);
-    MenuConfig("replyhi", "Reply hi TCP Service", StartReplyhi);
-    MenuConfig("hello", "Hello TCP Client", Hello);
+    MenuConfig("reply", "Reply hi TCP Service", StartReply);
+    MenuConfig("hello", "Hello UDP Client", Hello);
     ExecuteMenu();
 }
