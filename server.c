@@ -7,7 +7,7 @@
 #include<netinet/in.h>
 #include<string.h>
  
-#define MYPORT 8887
+#define MYPORT 5678
  
  
 #define ERR_EXIT(m) \
