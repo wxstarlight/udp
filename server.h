@@ -49,23 +49,3 @@ void echo_ser(int sock)
     close(sock);
 }
  
-int main(void)
-{
-    int sock;
-    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-        ERR_EXIT("socket error");
-    
-    struct sockaddr_in servaddr;
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(MYPORT);
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    
-    printf("监听%d端口\n",MYPORT);
-    if (bind(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
-        ERR_EXIT("bind error");
-    
-    echo_ser(sock);
-    
-    return 0;
-}
