@@ -19,6 +19,7 @@
 void echo_ser(int sock)
 {
     char recvbuf[1024] = {0};
+    char reply[]="hi";
     struct sockaddr_in peeraddr;
     socklen_t peerlen;
     int n;
@@ -30,10 +31,10 @@ void echo_ser(int sock)
 
         if(n > 0)
         {
-            printf("接收到的数据：%s\n",recvbuf);
-            sendto(sock, recvbuf, n, 0,
+            printf("server receive：%s\n",recvbuf);
+            sendto(sock, reply, sizeof(reply), 0,
                    (struct sockaddr *)&peeraddr, peerlen);
-            printf("回送的数据：%s\n",recvbuf);
+            printf("server reply：%s\n",reply);
         }
  
     close(sock);
