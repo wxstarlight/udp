@@ -28,7 +28,7 @@ void echo_ser(int sock)
         n = recvfrom(sock, recvbuf, sizeof(recvbuf), 0,
                      (struct sockaddr *)&peeraddr, &peerlen);
 
-        else if(n > 0)
+        if(n > 0)
         {
             printf("接收到的数据：%s\n",recvbuf);
             sendto(sock, recvbuf, n, 0,
