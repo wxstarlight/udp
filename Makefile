@@ -22,4 +22,4 @@ rootfs:
 	$(CC) $(CC_FLAGS) $<
 
 clean:
-$(RM) $(RM_FLAGS) $(OBJS) $(TARGET) *.bak init
+	$(RM) $(RM_FLAGS) $(OBJS) $(TARGET) *.bak init
