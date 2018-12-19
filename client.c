@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <string.h>
  
-#define MYPORT 8887
+#define MYPORT 5678
 char* SERVERIP = "127.0.0.1";
  
 #define ERR_EXIT(m) \
