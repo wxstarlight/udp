@@ -24,11 +24,11 @@ void echo_cli(int sock)
     char sendbuf[1024] = {'h','e','l','l','o'};
     char recvbuf[1024] = {0};
         
-    printf("向服务器发送：%s\n",sendbuf);
+    printf("client send to server：%s\n",sendbuf);
     sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
         
     ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
-    printf("从服务器接收：%s\n",recvbuf);
+    printf("client receive from server：%s\n",recvbuf);
     
     close(sock);
     
