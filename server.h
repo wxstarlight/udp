@@ -27,14 +27,7 @@ void echo_ser(int sock)
         memset(recvbuf, 0, sizeof(recvbuf));
         n = recvfrom(sock, recvbuf, sizeof(recvbuf), 0,
                      (struct sockaddr *)&peeraddr, &peerlen);
-        if (n <= 0)
-        {
-            
-            if (errno == EINTR)
-                continue;
-            
-            ERR_EXIT("recvfrom error");
-        }
+
         else if(n > 0)
         {
             printf("接收到的数据：%s\n",recvbuf);
