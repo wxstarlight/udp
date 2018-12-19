@@ -29,9 +29,7 @@ void echo_cli(int sock)
     int ret;
     char sendbuf[1024] = {0};
     char recvbuf[1024] = {0};
-    while (fgets(sendbuf, sizeof(sendbuf), stdin) != NULL)
-    {
-        
+
         printf("向服务器发送：%s\n",sendbuf);
         sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
         
@@ -43,10 +41,6 @@ void echo_cli(int sock)
             ERR_EXIT("recvfrom");
         }
         printf("从服务器接收：%s\n",recvbuf);
-        
-        memset(sendbuf, 0, sizeof(sendbuf));
-        memset(recvbuf, 0, sizeof(recvbuf));
-    }
     
     close(sock);
     
