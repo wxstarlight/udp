@@ -30,6 +30,8 @@ void echo_cli(int sock)
     char sendbuf[1024] = {0};
     char recvbuf[1024] = {0};
 
+    fgets(sendbuf, sizeof(sendbuf), stdin)
+     
         printf("向服务器发送：%s\n",sendbuf);
         sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
         
