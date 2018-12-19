@@ -27,26 +27,23 @@ void echo_cli(int sock)
     servaddr.sin_addr.s_addr = inet_addr(SERVERIP);
     
     int ret;
-    char sendbuf[1024] = {0};
+    char sendbuf[1024] = {hello};
     char recvbuf[1024] = {0};
-    while (fgets(sendbuf, sizeof(sendbuf), stdin) != NULL)
+        
+    printf("向服务器发送：%s\n",sendbuf);
+    sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
+        
+    ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
+    if (ret == -1)
     {
-        
-        printf("向服务器发送：%s\n",sendbuf);
-        sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
-        
-        ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
-        if (ret == -1)
-        {
-            if (errno == EINTR)
-                continue;
-            ERR_EXIT("recvfrom");
-        }
-        printf("从服务器接收：%s\n",recvbuf);
-        
-        memset(sendbuf, 0, sizeof(sendbuf));
-        memset(recvbuf, 0, sizeof(recvbuf));
+        if (errno == EINTR)
+            continue;
+        ERR_EXIT("recvfrom");
     }
+    printf("从服务器接收：%s\n",recvbuf);
+        
+    memset(sendbuf, 0, sizeof(sendbuf));
+    memset(recvbuf, 0, sizeof(recvbuf));
     
     close(sock);
     
