@@ -31,10 +31,10 @@ void echo_ser(int sock)
 
         if(n > 0)
         {
-            printf("server receive：%s\n",recvbuf);
+            printf("server receive:%s\n",recvbuf);
             sendto(sock, reply, sizeof(reply), 0,
                    (struct sockaddr *)&peeraddr, peerlen);
-            printf("server reply：%s\n",reply);
+            printf("server reply:%s\n",reply);
         }
  
     close(sock);
