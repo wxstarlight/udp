@@ -137,7 +137,7 @@ int Replyhi()
     servaddr.sin_port = htons(MYPORT);
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     
-    printf("监听%d端口\n",MYPORT);
+    printf("server listen to port:%d\n",MYPORT);
     if (bind(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
         ERR_EXIT("bind error");
     
