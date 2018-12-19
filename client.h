@@ -27,7 +27,7 @@ void echo_cli(int sock)
     servaddr.sin_addr.s_addr = inet_addr(SERVERIP);
     
     int ret;
-    char sendbuf[1024] = {hello};
+    char sendbuf[1024] = {‘h’，‘e’，‘l’，‘l’，‘o’};
     char recvbuf[1024] = {0};
         
     printf("向服务器发送：%s\n",sendbuf);
