@@ -122,6 +122,9 @@ int Quit(int argc, char *argv[])
     /* add XXX clean ops */
 }
 
+#include "server.h"
+#include "client.h"
+
 int Reply()
 {
     int sock;
