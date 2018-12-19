@@ -125,7 +125,7 @@ int Quit(int argc, char *argv[])
 #include "server.h"
 #include "client.h"
 
-int Reply()
+int Replyhi()
 {
     int sock;
     if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
@@ -146,7 +146,7 @@ int Reply()
     return 0;
 }
 
-int StartReply(int argc, char *argv[])
+int StartReplyHi(int argc, char *argv[])
 {
 	int pid;
 	/* fork another process */
@@ -160,13 +160,13 @@ int StartReply(int argc, char *argv[])
 	else if (pid == 0)
 	{
 		/*	 child process 	*/
-		Reply();
+		Replyhi();
 		printf("Reply hi UDP Service Started!\n");
 	}
 	else
 	{
 		/* 	parent process	 */
-		printf("Please input some words...\n");
+		printf("Please input hello...\n");
 	}
 }
 
@@ -284,7 +284,7 @@ int main()
     SetPrompt("MenuOS>>");
     MenuConfig("version","MenuOS V1.0(Based on Linux 3.18.6)",NULL);
     MenuConfig("quit","Quit from MenuOS",Quit);
-    MenuConfig("reply", "Reply hi TCP Service", StartReply);
+    MenuConfig("replyhi", "Reply hi TCP Service", StartReplyHi);
     MenuConfig("hello", "Hello UDP Client", Hello);
     ExecuteMenu();
 }
