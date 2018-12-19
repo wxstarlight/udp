@@ -23,7 +23,8 @@ void echo_ser(int sock)
     struct sockaddr_in peeraddr;
     socklen_t peerlen;
     int n;
-        
+    
+    while(1){
         peerlen = sizeof(peeraddr);
         memset(recvbuf, 0, sizeof(recvbuf));
         n = recvfrom(sock, recvbuf, sizeof(recvbuf), 0,
@@ -36,6 +37,9 @@ void echo_ser(int sock)
                    (struct sockaddr *)&peeraddr, peerlen);
             printf("server reply:%s\n",reply);
         }
+        else
+         break;
+    }
  
     close(sock);
 }
