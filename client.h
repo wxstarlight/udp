@@ -34,12 +34,6 @@ void echo_cli(int sock)
     sendto(sock, sendbuf, strlen(sendbuf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
         
     ret = recvfrom(sock, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
-    if (ret == -1)
-    {
-        if (errno == EINTR)
-            continue;
-        ERR_EXIT("recvfrom");
-    }
     printf("从服务器接收：%s\n",recvbuf);
         
     memset(sendbuf, 0, sizeof(sendbuf));
