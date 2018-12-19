@@ -10,13 +10,7 @@
  
 #define MYPORT 5678
 char* SERVERIP = "127.0.0.1";
- 
-#define ERR_EXIT(m) \
-    do \
-{ \
-    perror(m); \
-    exit(EXIT_FAILURE); \
-    } while(0)
+
  
 void echo_cli(int sock)
 {
