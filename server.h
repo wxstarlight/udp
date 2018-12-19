@@ -22,9 +22,6 @@ void echo_ser(int sock)
     struct sockaddr_in peeraddr;
     socklen_t peerlen;
     int n;
-    
-    while (1)
-    {
         
         peerlen = sizeof(peeraddr);
         memset(recvbuf, 0, sizeof(recvbuf));
@@ -45,7 +42,7 @@ void echo_ser(int sock)
                    (struct sockaddr *)&peeraddr, peerlen);
             printf("回送的数据：%s\n",recvbuf);
         }
-    }
+ 
     close(sock);
 }
  
