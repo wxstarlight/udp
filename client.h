@@ -53,13 +53,3 @@ void echo_cli(int sock)
     
 }
  
-int main(void)
-{
-    int sock;
-    if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-        ERR_EXIT("socket");
-    
-    echo_cli(sock);
-    
-    return 0;
-}
